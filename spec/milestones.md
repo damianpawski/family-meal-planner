@@ -9,7 +9,7 @@ Each milestone is a thin, complete slice of the app: it runs locally with one `d
 A milestone is done when all four are true:
 
 1. **Automated:** every MUST in its scope has a passing test that names its id, every Gherkin scenario listed has a passing Playwright test (360 px and desktop), every worked example marked with this milestone ([spec 1.3](spec.md#13-offline-shopping-changes), [sync contract](sync-contract.md#worked-examples-each-becomes-a-test)) has a passing test named after it, and CI is green, including axe and, from M1 on (when the first endpoints that take input and the owner-only policy exist), the abuse suite ([SEC-10](spec.md#81-input-safety)) and the owner-only reflection test.
-2. **Screens:** the author has accepted each new screen on the phone against its design (or against the missing-design note, where there is no design yet). Accepted screens become visual baselines.
+2. **Screens:** the author has accepted each new screen on the phone against its design (or against the missing-design note, where there is no design yet), including a two-minute pass with TalkBack, Android's screen reader: every control can be reached and is read out with its name and state ("Milk, 2 l, not ticked, button"). Accepted screens become visual baselines.
 3. **By hand:** the author works through the milestone's **Try it** list, on the laptop and on the phone, and every step behaves as written.
 4. **Seed data:** `mealplanner seed-demo` is extended so the milestone can be tried on a realistic family (people Maria, Diego, Leo, Ava; dishes; a planned week) in seconds, and reset just as fast.
 
@@ -81,6 +81,7 @@ A milestone is done when all four are true:
 - Invite by email, accept the invite with name and password, sign in, sign out, forgot password, change password, lockout, password rules.
 - Edit profile: name, sticker colour, "Food I don't eat".
 - Manage family: everyone and open invites; owner can invite, resend, cancel, remove. Leave the family (not the owner). The "You're not in a family yet" screen.
+- These screens read from the server, because the phone's local copy of the data arrives in M2a. Account actions (sign in, invites, passwords, profile changes) need a connection anyway and say "You're offline. This needs a connection" offline. The Family tab's people list moves to the local copy in M2a, so build it to make that switch small.
 - Family isolation in both layers (query filter plus `(FamilyId, Id)` keys), owner-only policy with the reflection test, rate limits on sign-in and code endpoints, the abuse suite against every endpoint so far. Isolation tests cover every write path, not only API handlers: the `mealplanner` commands, background jobs and any bulk or raw-SQL statement (such as the grocery upsert) must also be unable to read, write or link another family's rows.
 
 **Requirements:** [DOM-01](spec.md#03-rules-that-are-always-true), [DOM-02](spec.md#03-rules-that-are-always-true), [DOM-10](spec.md#03-rules-that-are-always-true), [DOM-24](spec.md#03-rules-that-are-always-true) (set at creation), [ACC-01](spec.md#22-who-can-do-what), [ACC-02](spec.md#22-who-can-do-what) (invite, cancel, remove), [ACC-03](spec.md#22-who-can-do-what), [ACC-04](spec.md#22-who-can-do-what), [ACC-10](spec.md#23-creating-a-family), [ACC-11](spec.md#23-creating-a-family), [ACC-20](spec.md#24-joining-a-family) to [ACC-23](spec.md#24-joining-a-family), [ACC-30](spec.md#25-signing-in-codes-and-passwords) to [ACC-35](spec.md#25-signing-in-codes-and-passwords), [ACC-40](spec.md#26-your-own-account), [ACC-42](spec.md#26-your-own-account), [ACC-50](spec.md#27-managing-the-family-owner), [ACC-51](spec.md#27-managing-the-family-owner), [ACC-53](spec.md#27-managing-the-family-owner) (non-owners), [ACC-54](spec.md#27-managing-the-family-owner), [LIM-08](spec.md#03b-limits), [LIM-11](spec.md#03b-limits), [LIM-12](spec.md#03b-limits), [LIM-17](spec.md#03b-limits) (email, food), [SEC-01](spec.md#81-input-safety), [SEC-03](spec.md#81-input-safety), [SEC-04](spec.md#81-input-safety), [SEC-06](spec.md#81-input-safety), [SEC-07](spec.md#81-input-safety), [SEC-10](spec.md#81-input-safety).
@@ -104,12 +105,14 @@ A milestone is done when all four are true:
 **Goal:** the family shares one shopping list of typed-in items, sees each other's changes within 30 seconds, and can read it offline. This milestone lays the sync foundation every later screen uses: the change feed, the local store, pull-to-refresh and the sync status. It deliberately keeps the list itself simple; managing groceries and the list's extra tools follow in M2b (split from one M2 on 2026-11-10, because together they were about a month of work).
 
 **Scope**
-- **First, before any sync code:** finish [sync-contract.md](sync-contract.md) (requests and results, cursor, paging, retries, idempotency, tombstones) and decide its remaining proposals and the open questions in [spec 1.9](spec.md#19-open-questions). Its worked examples marked M2a (C5, C7) are proven here.
+- **First, before any sync code:** finish [sync-contract.md](sync-contract.md) (requests and results, cursor, paging, retries, idempotency, tombstones) and check it against [spec 1.9](spec.md#19-open-questions), whose questions are all answered. Its worked examples marked M2a (C5, C7) are proven here.
 - **Performance budgets:** write the chapter 8 numbers (first load, repeat load and download size on the Galaxy A5 profile) as **targets**, not as measurements of the M0 build, which is an empty shell that every real screen would exceed. CI enforces them from this milestone on, so every later screen is checked against them.
 - Change feed under the family row lock, paged pull, tombstones; IndexedDB local store; refresh on open, reconnect, every 20 s and pull-to-refresh; sync status header (Synced, Offline · showing {time}).
 - Groceries, the basics: one per name, created by upsert, unit kind set by first use, a new grocery goes in "Other".
 - Shopping lists by week (dates from the family's week start day, Monday until M2b makes it changeable), ‹ and ›, "Nothing to buy yet". Its **Plan this week** button opens the Week tab, which stays empty until M6.
-- Add item (name with suggestions, amount, unit dropdown), extras merging by amount, lines grouped By aisle, ticking with the 2-second pause (sent as [sync contract §5](sync-contract.md#5-ticks-and-extras) decides), Done group, Hide done, progress, the tab badge, other people's changes appearing in place.
+- Add item (name with suggestions, amount, unit dropdown), extras merging by amount, lines grouped By aisle, ticking with the 2-second pause, Done group, Hide done, progress, the tab badge, other people's changes appearing in place.
+- **The outbox, online:** ticks and extras always go through the outbox ([sync contract §5](sync-contract.md#5-ticks-and-extras)). Here it's sent at once, with the per-operation results and the clock correction; M3 makes it work offline.
+- The Family tab's people list reads from the local copy, so it opens offline.
 - Offline, every edit control says it needs a connection (offline ticking arrives in M3).
 
 **Requirements:** [SYNC-01](spec.md#12-what-works-offline), [SYNC-03](spec.md#12-what-works-offline), [SYNC-04](spec.md#12-what-works-offline) (lists), [SYNC-21](spec.md#14-online-changes), [SYNC-22](spec.md#14-online-changes), [SYNC-30](spec.md#15-seeing-the-familys-changes) to [SYNC-33](spec.md#15-seeing-the-familys-changes), [SYNC-40](spec.md#16-sync-status) (Synced and Offline states), [DOM-08](spec.md#03-rules-that-are-always-true), [DOM-12](spec.md#03-rules-that-are-always-true), [DOM-13](spec.md#03-rules-that-are-always-true), [DOM-15](spec.md#03-rules-that-are-always-true), [DOM-23](spec.md#03-rules-that-are-always-true), [SHOP-01](spec.md#52-the-shopping-tab) to [SHOP-04](spec.md#52-the-shopping-tab), [SHOP-05](spec.md#52-the-shopping-tab) and [SHOP-06](spec.md#52-the-shopping-tab) (By aisle), [SHOP-07](spec.md#52-the-shopping-tab) (extras), [SHOP-09](spec.md#52-the-shopping-tab) to [SHOP-11](spec.md#53-ticking), [SHOP-15](spec.md#53-ticking) to [SHOP-18](spec.md#54-extra-items-and-editing-a-line) (SHOP-18 online; offline in M3), [LIM-09](spec.md#03b-limits), [LIM-14](spec.md#03b-limits).
@@ -159,7 +162,7 @@ A milestone is done when all four are true:
 **Goal:** in the shop with no signal, ticking and adding extras just work, survive the app closing and updating, and reach the family when the signal comes back.
 
 **Scope**
-- Outbox as plain JSON operations (tick, untick, addExtra, removeExtra with `amountSeen` and `madeAt`), sent by the app under one Web Lock; idempotent `opId`s; latest `madeAt` wins; waiting dots; "N waiting" and "Couldn't sync N changes · Retry now"; automatic retries. Proven with the worked examples marked M3: X1, X2, X5, X6 and X8 to X15 ([spec 1.3](spec.md#13-offline-shopping-changes)), and C1, C2, C8, C10 to C12 and C14 to C16 ([sync contract](sync-contract.md)). X3, X4 and X7 need dishes on the list and are proven in M7.
+- The outbox from M2a, made to work offline: operations (tick, untick, addExtra, removeExtra with `amountSeen` and `madeAt`) kept as plain JSON through closing the app and restarting the phone, sent by the app under one Web Lock; idempotent `opId`s; latest `madeAt` wins; waiting dots; "N waiting" and "Couldn't sync N changes · Retry now"; automatic retries. Proven with the worked examples marked M3: X1, X2, X5, X6 and X8 to X15 ([spec 1.3](spec.md#13-offline-shopping-changes)), and C1, C2, C8, C10 to C12 and C14 to C16 ([sync contract](sync-contract.md)). X3, X4 and X7 need dishes on the list and are proven in M7.
 - **Last task, once foreground sync is proven:** the service-worker sender with Background Sync (Android), as an extra delivery path. It sends the same operations under the same Web Lock; operations leave the outbox only when the server confirms them, never just because a sync event fired.
 - Sessions: 30 days offline, signing in again when expired, a different person on the same phone, sign-out wipes the phone (offering to send first), removed person's phone wiped.
 - App updates: update bar, never reloading mid-edit, waiting changes kept through an update, "Update needed to sync".
@@ -192,7 +195,7 @@ A milestone is done when all four are true:
 - Gmail SMTP through MailKit with an app password.
 - restic nightly encrypted backups (30 daily, 12 monthly), and **one restore rehearsed by hand**: last night's backup restored into a throwaway Postgres, with the family's data checked. A backup nobody has restored doesn't count.
 - **The VM can only add to the backups:** an append-only repository (restic's REST server in append-only mode, or a storage key without delete rights), with `forget --prune` run from the admin's machine, so someone who takes over the VM can't delete them ([architecture 5](architecture.md#5-other-infrastructure)).
-- Expand-then-contract migrations and the sync contract tests start with this first release.
+- From this first release, the outbox format is frozen until v1, and contract tests prove that saved outbox batches from every earlier release still apply. Other changes may ask an old phone to update (UPD-05). The full 30-day rule and expand-then-contract migrations start with v1 (M13).
 - Rehearse the whole deploy on a local Linux VM first.
 
 **Scope: can follow after go-live** (each is done before [M13](#m13-v1-sign-off), which checks them)
@@ -200,7 +203,7 @@ A milestone is done when all four are true:
 - Seq alerts (Seq itself is needed at launch, to find error refs).
 - Running the deploy from GitHub Actions instead of by hand.
 
-**Requirements:** [ACC-12](spec.md#23-creating-a-family), [UPD-04](spec.md#74-app-updates), plus [architecture 5](architecture.md#5-other-infrastructure) (deploy, backups, observability). Chapter 8 will add ids for these.
+**Requirements:** [ACC-12](spec.md#23-creating-a-family), [UPD-04](spec.md#74-app-updates) (the before-v1 part; contract example C9), plus [architecture 5](architecture.md#5-other-infrastructure) (deploy, backups, observability). Chapter 8 will add ids for these.
 
 **Try it**
 1. Rehearse: run `deploy.sh` against a local VM, then against the real one.
@@ -410,14 +413,14 @@ A milestone is done when all four are true:
 
 **Goal:** v1 is fast enough on the Galaxy A5, accessible, and every scenario in the spec passes together.
 
-**Scope:** the [chapter 8](spec.md#8-non-functional) performance budgets (enforced in CI since M2a) checked on a real A5 as well as the throttled profile; an accessibility pass on every screen (axe plus a manual TalkBack run); the full Gherkin suite and visual baselines; a final restore test; the M4 "can follow after go-live" items are done; ADRs brought up to date.
+**Scope:** the [chapter 8](spec.md#8-non-functional) performance budgets (enforced in CI since M2a) checked on a real A5 as well as the throttled profile; an accessibility pass on every screen (axe plus a manual TalkBack run); the full Gherkin suite and visual baselines; a final restore test; the M4 "can follow after go-live" items are done; from the v1 release on, the 30-day rule for every sync request (UPD-04, contract example C17) and expand-then-contract migrations; ADRs brought up to date.
 
 **Requirements:** the remaining [chapter 8](spec.md#8-non-functional) ids (performance, accessibility, observability, backups) once they're written.
 
 **Try it**
 1. Cold-open the installed app on the A5 on a throttled connection and compare it with the [chapter 8](spec.md#8-non-functional) targets.
 2. Use one week (plan, shop offline, cook, rate) with TalkBack on.
-3. Do a full family week for real and note anything that made someone reach for paper.
+3. The family plans, shops and cooks for one full week using only the app. It passes if nobody needed a paper list. Each time someone did is a bug, fixed before v1 is signed off, and then the week is repeated.
 
 ---
 
