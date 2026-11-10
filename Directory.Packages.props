@@ -1,0 +1,15 @@
+<Project>
+  <!-- Central package management: every package version is set here, once.
+       Projects reference packages without a version. -->
+
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <!-- Lets a version set here also pin a package that only arrives transitively,
+         for example to move off a vulnerable version. -->
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Package versions arrive with the first projects (M0 task 2). -->
+  </ItemGroup>
+</Project>

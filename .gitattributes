@@ -1,0 +1,17 @@
+# Text files are stored and checked out with LF line endings on every OS,
+# so diffs and file hashes match between Windows laptops and Linux CI.
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Binary files: never converted, never diffed as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary

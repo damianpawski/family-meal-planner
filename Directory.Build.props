@@ -1,0 +1,34 @@
+<Project>
+  <!-- Shared by every project in the repo. Settings that differ per project stay in its .csproj. -->
+
+  <PropertyGroup>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <!-- Apply the code-style rules in .editorconfig in every build, not only in the editor. -->
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <!-- The unused-using rule (IDE0005) only runs in a build when documentation files are generated.
+         Missing doc comments (CS1591) aren't an error: comments are written where they help. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <!-- Otherwise the SDK appends "+<commit hash>" to the version shown in About (UPD-06). -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <!-- Supply chain (ADR 12): exact versions are recorded in packages.lock.json, and CI refuses any change to them. -->
+  <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
+  </PropertyGroup>
+
+  <!-- NuGet Audit checks direct and transitive packages against known vulnerabilities.
+       High (NU1903) and critical (NU1904) fail the build; low (NU1901) and moderate (NU1902) stay warnings,
+       fixed through Dependabot's security updates. -->
+  <PropertyGroup>
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1901;NU1902</WarningsNotAsErrors>
+  </PropertyGroup>
+</Project>
