@@ -9,6 +9,7 @@ Intent: [intent.md](intent.md) · Stack review: [approach-review.md](approach-re
 - **MUST** is required for v1. **SHOULD** is wanted but can slip. **LATER** is recorded but not built in v1.
 - Acceptance criteria are written as Given / When / Then so they can become automated UAT scenarios directly.
 - This spec describes **behaviour**: what the family sees and what must always be true. How it's built (storage, ids, protocols) lives in [architecture.md](architecture.md), so the implementation can change without touching the spec.
+- **All people in the examples are fictional:** the Rivera family (Carlos, Maria, Diego, Leo and Ava) and every address ending in `@example.com`. The same names are used in the milestones, tests and seed data.
 
 ## Decisions log
 
