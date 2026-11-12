@@ -1,0 +1,4 @@
+#!/bin/sh
+# The push review gate (docs/review/push-review.md). git passes the remote's name and URL
+# as arguments and the refs being pushed on standard input; both go on to the script.
+exec pwsh -NoLogo -NoProfile -NonInteractive -File "$(dirname "$0")/push-review.ps1" "$@"

@@ -38,7 +38,7 @@ Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
 - **Types:** `feat` (new behaviour), `fix` (a bug), `test` (tests only), `docs` (documents only), `build` (projects, packages, SDK, repo configuration), `ci` (GitHub Actions), `refactor` (no behaviour change), `chore` (anything else).
 - **Area:** the project where the behaviour lives: `server`, `client`, `ui`, `data` or `apphost`; for documents `spec`, `plan`, `adr` or `review`; `deps` for dependency updates; `repo` for repo-wide configuration. A `test` commit names the code under test (`test(server)`), not the tests. The area is left out when a change has no single home, such as a slice that spans server and client equally, or a `ci` change.
 - **The text** starts with a lowercase verb in the imperative ("add", "refuse", "fix"), has no full stop at the end, and the whole subject line is at most 72 characters.
-- **`!` marks a breaking change**, together with a `BREAKING CHANGE:` trailer that says what breaks and what phones or people need to do. Before v1, the outbox format must not change at all ([sync contract §7](../spec/sync-contract.md#7-versions-and-sessions)), so a breaking change to it fails the push review.
+- **`!` marks a breaking change**, together with a `BREAKING-CHANGE:` trailer that says what breaks and what phones or people need to do. It's written with a hyphen: git reads the last paragraph as trailers only if every line in it is one, and a key with a space isn't, so `BREAKING CHANGE:` would hide the `Spec:` and `Task:` trailers too. Before v1, the outbox format must not change at all ([sync contract §7](../spec/sync-contract.md#7-versions-and-sessions)), so a breaking change to it fails the push review.
 - **Two exceptions** to the pattern: `git revert` subjects (`Revert "<original subject>"`), and Dependabot's (below).
 
 The hook and CI check the subject with exactly this pattern (extended regular expression, the same in `grep -E`, .NET and PowerShell), so the two can't drift apart:
@@ -64,7 +64,7 @@ Trailers are the **last paragraph** of the message, one per line, with no blank 
 | `Spec:` | every `feat`, `fix` and `test` commit | the requirement or worked-example ids the commit implements or changes (`SEC-02, X13`), or `none` when there's no id, for example a bug in the AppHost. `none` is a visible choice, not a forgotten trailer |
 | `Task:` | every commit that belongs to a plan task | the milestone and task number from its plan: `M0.6` is task 6 in `docs/plan/M0.md`. The hook checks that the task exists |
 | `Issue:` | instead of `Task:`, for work outside any plan task | the GitHub issue: `Issue: #12` (a bug found after a milestone closed, a manual dependency update) |
-| `BREAKING CHANGE:` | with `!` in the subject | what breaks and what to do about it |
+| `BREAKING-CHANGE:` | with `!` in the subject | what breaks and what to do about it |
 | `Review-note:` | when the author overrules a FAIL from the push review | the finding's id and the reason. The note is binding ([push review](review/push-review.md#when-the-reviewer-is-wrong)) |
 | `Co-Authored-By:` | when an AI agent wrote the change | `Claude Opus 5.5 <noreply@anthropic.com>` |
 
