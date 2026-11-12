@@ -348,7 +348,7 @@ A milestone is done when all four are true:
 
 **Goal:** dishes can have a photo, taken on the phone, that's small to keep offline and safe to store.
 
-**Scope:** camera or gallery upload, NetVips decode and re-encode to WebP thumbnail and full size (location data stripped), `IPhotoStore` on a volume, remove photo, thumbnails kept offline, full size kept once viewed within a budget.
+**Scope:** first, the licence decision for libvips's native binaries, which are LGPL-3.0-or-later ([ADR 12](../docs/adr/0012-licence-and-supply-chain.md)), and a check on the A5's Chrome that taking a photo through a file input still works under the app's `Permissions-Policy` ([ADR 14](../docs/adr/0014-security-headers-in-the-app.md)). Then camera or gallery upload, NetVips decode and re-encode to WebP thumbnail and full size (location data stripped), `IPhotoStore` on a volume, remove photo, thumbnails kept offline, full size kept once viewed within a budget.
 
 **Requirements:** [REC-40](spec.md#36-photos), [SEC-08](spec.md#81-input-safety), [LIM-16](spec.md#03b-limits), [SYNC-04](spec.md#12-what-works-offline) (photos).
 
