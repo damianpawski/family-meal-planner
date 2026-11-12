@@ -1,7 +1,8 @@
 # Runs external programs (git, gitleaks, dotnet) for the push review.
 #
-# Every call goes through Invoke-Native so that a failing or hanging tool stops the
+# Every call goes through these functions so that a failing or hanging tool stops the
 # review instead of being read as "nothing found". Stdout and stderr are read separately.
+# Start-Native and Wait-Native are separate so that several programs can run at once.
 
 $script:Utf8NoBom = [System.Text.UTF8Encoding]::new($false)
 
@@ -18,13 +19,12 @@ function Resolve-Executable([string] $Name) {
     $command.Source
 }
 
-function Invoke-Native {
+function Start-Native {
     param(
         [Parameter(Mandatory)] [string] $FilePath,
         [string[]] $ArgumentList = @(),
         [string] $WorkingDirectory = (Get-Location).Path,
-        [string] $StandardInput,
-        [TimeSpan] $Timeout = [TimeSpan]::FromMinutes(30)
+        [string] $StandardInput
     )
 
     $startInfo = [System.Diagnostics.ProcessStartInfo]::new($FilePath)
@@ -41,24 +41,50 @@ function Invoke-Native {
     $startInfo.StandardErrorEncoding = $script:Utf8NoBom
 
     $process = [System.Diagnostics.Process]::Start($startInfo)
+
+    # Both streams are drained asynchronously: reading one to the end while the other
+    # fills its pipe buffer would deadlock on large outputs such as full diffs.
+    $handle = [pscustomobject]@{
+        Process     = $process
+        Description = "$([System.IO.Path]::GetFileName($FilePath)) $($ArgumentList | Select-Object -First 3)"
+        StdOutTask  = $process.StandardOutput.ReadToEndAsync()
+        StdErrTask  = $process.StandardError.ReadToEndAsync()
+    }
+
+    if ($StandardInput) { $process.StandardInput.Write($StandardInput) }
+    $process.StandardInput.Close()
+    $handle
+}
+
+function Wait-Native {
+    param(
+        [Parameter(Mandatory)] [object] $Handle,
+        [TimeSpan] $Timeout = [TimeSpan]::FromMinutes(30)
+    )
     try {
-        # Both streams are drained asynchronously: reading one to the end while the other
-        # fills its pipe buffer would deadlock on large outputs such as full diffs.
-        $stdoutTask = $process.StandardOutput.ReadToEndAsync()
-        $stderrTask = $process.StandardError.ReadToEndAsync()
-        if ($StandardInput) { $process.StandardInput.Write($StandardInput) }
-        $process.StandardInput.Close()
-        if (-not $process.WaitForExit($Timeout)) {
-            $process.Kill($true)
-            throw "'$([System.IO.Path]::GetFileName($FilePath)) $($ArgumentList | Select-Object -First 3)' didn't finish within $(Format-Duration $Timeout)."
+        if (-not $Handle.Process.WaitForExit($Timeout)) {
+            $Handle.Process.Kill($true)
+            throw "'$($Handle.Description)' didn't finish within $(Format-Duration $Timeout)."
         }
         [pscustomobject]@{
-            ExitCode = $process.ExitCode
-            StdOut   = $stdoutTask.GetAwaiter().GetResult()
-            StdErr   = $stderrTask.GetAwaiter().GetResult()
+            ExitCode = $Handle.Process.ExitCode
+            StdOut   = $Handle.StdOutTask.GetAwaiter().GetResult()
+            StdErr   = $Handle.StdErrTask.GetAwaiter().GetResult()
         }
     }
     finally {
-        $process.Dispose()
+        $Handle.Process.Dispose()
     }
+}
+
+function Invoke-Native {
+    param(
+        [Parameter(Mandatory)] [string] $FilePath,
+        [string[]] $ArgumentList = @(),
+        [string] $WorkingDirectory = (Get-Location).Path,
+        [string] $StandardInput,
+        [TimeSpan] $Timeout = [TimeSpan]::FromMinutes(30)
+    )
+    $handle = Start-Native -FilePath $FilePath -ArgumentList $ArgumentList -WorkingDirectory $WorkingDirectory -StandardInput $StandardInput
+    Wait-Native -Handle $handle -Timeout $Timeout
 }
