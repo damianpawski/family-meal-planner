@@ -1,0 +1,41 @@
+{
+  "$comment": "The result each AI review pass must return (docs/review/push-review.md, Verdict and output). Passed to Claude Code with --json-schema.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pass", "verdict", "summary", "findings", "commits"],
+  "properties": {
+    "pass": { "enum": ["sensitive", "developer", "architect", "reader"] },
+    "verdict": { "enum": ["PASS", "FAIL"] },
+    "summary": { "type": "string" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "severity", "commit", "file", "line", "evidence", "fix"],
+        "properties": {
+          "id": { "type": "string" },
+          "severity": { "enum": ["FAIL", "FLAG", "NIT"] },
+          "commit": { "type": "string" },
+          "file": { "type": "string" },
+          "line": { "type": "integer", "minimum": 0 },
+          "evidence": { "type": "string" },
+          "fix": { "type": "string" }
+        }
+      }
+    },
+    "commits": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["commit", "summary", "talkingPoints"],
+        "properties": {
+          "commit": { "type": "string" },
+          "summary": { "type": "string" },
+          "talkingPoints": { "type": "string" }
+        }
+      }
+    }
+  }
+}

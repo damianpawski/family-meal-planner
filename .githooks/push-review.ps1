@@ -6,12 +6,12 @@
 .DESCRIPTION
     Run by .githooks/pre-push, which passes git's arguments (the remote's name and URL)
     and the refs being pushed on standard input. Runs the fixed checks (Part 1) on every
-    commit being pushed. Exits with 1 to block the push.
+    commit being pushed, then the AI review (Part 2). Exits with 1 to block the push.
 
     CI repeats the fixed checks on a pull request's commits with -Ci (Part 4): all of
-    them except F3, whose list of personal strings exists only on the author's machine.
-    No option makes a check more lenient; git push --no-verify skips the hook altogether,
-    which is why CI repeats the checks.
+    them except F3, whose list of personal strings exists only on the author's machine,
+    and no AI review. No option makes a check more lenient; git push --no-verify skips
+    the hook altogether, which is why CI repeats the checks.
 
 .EXAMPLE
     pwsh .githooks/push-review.ps1 -Range origin/main..HEAD -Ci -ExpectedEmail 1+user@users.noreply.github.com
@@ -34,6 +34,7 @@ $ErrorActionPreference = 'Stop'
 $script:RepoRoot = (Invoke-Native -FilePath (Resolve-Executable 'git') -ArgumentList @('rev-parse', '--show-toplevel')).StdOut.Trim()
 . "$PSScriptRoot/lib/Git.ps1"
 . "$PSScriptRoot/lib/FixedChecks.ps1"
+. "$PSScriptRoot/lib/AiReview.ps1"
 
 function Get-PushedRefs {
     # One entry per branch being pushed, with the commits no branch on the remote has yet,
@@ -105,6 +106,22 @@ try {
     Write-FixedChecks $failures $buildRan
     if ($failures.Count -gt 0) {
         Write-Host 'Push blocked by the fixed checks. These can''t be overruled; fix the commits or the check''s input.' -ForegroundColor Red
+        exit 1
+    }
+    if ($Ci) { exit 0 }
+
+    Write-Host 'Part 2, AI review:'
+    $passed = $true
+    foreach ($ref in $refs) {
+        $refCommits = @($commits | Where-Object { $_.Sha -in $ref.Shas })
+        $review = Invoke-AiReview $refCommits $ref.Tip $stateDirectory
+        Write-AiReview $review
+        $report = Write-ReviewReport $review $ref.Branch $stateDirectory
+        Write-Host "  Report: $report"
+        $passed = $passed -and $review.Passed
+    }
+    if (-not $passed) {
+        Write-Host 'Push blocked by the AI review. Fix the commits, or overrule a FAIL with a Review-note: trailer (docs/review/push-review.md).' -ForegroundColor Red
         exit 1
     }
     Write-Host 'Push review passed.' -ForegroundColor Green

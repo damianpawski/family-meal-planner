@@ -7,10 +7,11 @@ function Invoke-Git {
     param(
         [Parameter(Mandatory)] [string[]] $Arguments,
         [string] $StandardInput,
+        [string] $OutputFile,
         [switch] $AllowFailure
     )
     $result = Invoke-Native -FilePath $script:GitExe -ArgumentList (@('-c', 'core.quotepath=off') + $Arguments) `
-        -WorkingDirectory $script:RepoRoot -StandardInput $StandardInput
+        -WorkingDirectory $script:RepoRoot -StandardInput $StandardInput -OutputFile $OutputFile
     if ($result.ExitCode -ne 0 -and -not $AllowFailure) {
         throw "git $($Arguments -join ' ') failed ($($result.ExitCode)): $($result.StdErr.Trim())"
     }
@@ -99,6 +100,11 @@ function Get-ChangedFiles([string] $Sha) {
 function Get-FileAtCommit([string] $Sha, [string] $Path) {
     $result = Invoke-Git @('show', "${Sha}:$Path") -AllowFailure
     if ($result.ExitCode -eq 0) { $result.StdOut } else { $null }
+}
+
+function Save-Blob([string] $Sha, [string] $Path, [string] $Destination) {
+    New-Item -ItemType Directory -Force -Path (Split-Path $Destination -Parent) | Out-Null
+    Invoke-Git @('cat-file', 'blob', "${Sha}:$Path") -OutputFile $Destination | Out-Null
 }
 
 function New-TemporaryWorktree([string] $Sha, [string] $Name) {
