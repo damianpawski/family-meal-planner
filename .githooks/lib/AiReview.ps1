@@ -127,7 +127,16 @@ function Read-ReviewPass([string] $Pass, [object] $Run, [object[]] $Commits) {
     # reviewer found.
     $quote = { param($text) if ($Pass -eq 'sensitive') { '(not shown for the sensitive-data pass)' } else { $text } }
     if ($Run.ExitCode -ne 0) {
-        return [pscustomobject]@{ Error = "Claude Code exited with $($Run.ExitCode): $(& $quote (Get-Tail $Run.StdErr 5))"; Result = $null }
+        # Claude Code often explains a failed run (a usage limit, an expired sign-in) in its
+        # JSON output rather than on stderr, so the reason is taken from there when stderr
+        # is empty.
+        $reason = "$($Run.StdErr)".Trim()
+        if (-not $reason) {
+            try { $reason = "$(($Run.StdOut | ConvertFrom-Json).result)".Trim() }
+            catch { $reason = (Get-Tail $Run.StdOut 5).Trim() }
+        }
+        if (-not $reason) { $reason = 'no reason given' }
+        return [pscustomobject]@{ Error = "Claude Code exited with $($Run.ExitCode): $(& $quote (Get-Tail $reason 5))"; Result = $null }
     }
     try { $output = $Run.StdOut | ConvertFrom-Json }
     catch { return [pscustomobject]@{ Error = 'its output isn''t JSON'; Result = $null } }
