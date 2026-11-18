@@ -4,7 +4,7 @@ Draft 3 · 2026-11-10 · finished as the **first task of M2a**, before any sync 
 
 **Which document wins:** the spec ([chapter 1](spec.md#1-offline-and-sync)) says what must be true and wins over both other files. On protocol details, this contract wins over architecture.md.
 
-The author decided every open point in this contract on 2026-11-10; finishing it in M2a means checking it against the code as it's written. Every worked example names the milestone whose tests prove it.
+The author decided every open point in this contract on 2026-11-10; finishing it in M2a means checking it against the code as it's written. Every worked example names the milestone whose tests prove it. Two points were opened again on 2026-11-15 by the [milestones review](milestones-review.md) and are listed [at the end](#open-points).
 
 ## 1. Change counter
 
@@ -91,7 +91,7 @@ The rules are in the spec: SYNC-15 to SYNC-17 and DOM-22, DOM-23, with worked ex
 
 ## 8. Senders
 
-- The foreground sender (the app) is built and proven first in M3. The service-worker sender with Background Sync is M3's last task.
+- The foreground sender (the app) is built and proven first in M3a. The service-worker sender with Background Sync follows in the same milestone, once foreground sync is proven.
 - **The sync event:** network errors and `5xx` fail the event, so the browser retries it later. `200`, `401` and `426` complete it: retrying can't help, and the app handles those states when it next opens.
 - The service worker tells an open app what it sent through a `BroadcastChannel`, so the waiting dots update.
 
@@ -99,20 +99,27 @@ The rules are in the spec: SYNC-15 to SYNC-17 and DOM-22, DOM-23, with worked ex
 
 | # | Situation | Expected result | Proven in |
 |---|---|---|---|
-| C1 | A batch of 3 operations commits, the response is lost, the phone resends | Applied once; the resend returns the same 3 results; the outbox is empty | M3 |
-| C2 | A batch where one operation targets a deleted line | The other operations apply; that one is `dropped` (SYNC-17) and leaves the outbox | M3 |
+| C1 | A batch of 3 operations commits, the response is lost, the phone resends | Applied once; the resend returns the same 3 results; the outbox is empty | M3a |
+| C2 | A batch where one operation targets a deleted line | The other operations apply; that one is `dropped` (SYNC-17) and leaves the outbox | M3a |
 | C3 | An online slot save commits, the response is lost, the phone retries with the same key | The stored response comes back; no `409`, no second change | M6 |
-| C4 | Two people save the same dish at once from the same state | One wins; the other gets `409` with the current dish and "Maria changed this a moment ago" (SYNC-20) | M5 |
+| C4 | Two people save the same dish at once from the same state | One wins; the other gets `409` with the current dish and "Maria changed this a moment ago" (SYNC-20) | M5a |
 | C5 | A pull is on page 2 of 3 while someone saves | The pull ends at its `upTo`; the new change comes with the next pull, never lost and never half-shown | M2a |
 | C6 | Clear list removes 5 lines in one action | All 5 tombstones have the same counter and arrive in the same page | M2b |
 | C7 | A phone saves online (counter 50) without having pulled 49 | Its cursor stays where it was; the next pull returns 49 and 50 | M2a |
-| C8 | A phone comes back after 4 months | `401` (the 30-day session expired); after signing in, the outbox is sent (ticks for purged items come back `dropped`); the pull gets `410`; full re-download | M3 |
-| C9 | Before v1: a phone one release behind sends its waiting ticks, then pulls | The ticks are accepted (the outbox format never changes); the pull gets `426` and the phone shows "Update needed to sync" (UPD-04, UPD-05) | M4 |
-| C10 | A phone's contract version is no longer accepted | `426`; "Update needed to sync"; ticks kept; the app stays usable read-only (UPD-05) | M3 |
-| C11 | The session expired while ticks were waiting | `401`; sign in again; ticks then sent (SYNC-51) | M3 |
-| C12 | The service worker is stopped halfway through sending | Operations not confirmed stay in the outbox and are sent again; no duplicates (SYNC-14) | M3 |
+| C8 | A phone comes back after 4 months | `401` (the 30-day session expired); after signing in, the outbox is sent (ticks for purged items come back `dropped`); the pull gets `410`; full re-download | M3a |
+| C9 | Before v1: a phone one release behind sends its waiting ticks, then pulls | The ticks are accepted (the outbox format never changes); the pull gets `426` and the phone shows "Update needed to sync" (UPD-04, UPD-05) | M4b |
+| C10 | A phone's contract version is no longer accepted | `426`; "Update needed to sync"; ticks kept; the app stays usable read-only (UPD-05) | M3b |
+| C11 | The session expired while ticks were waiting | `401`; sign in again; ticks then sent (SYNC-51) | M3a |
+| C12 | The service worker is stopped halfway through sending | Operations not confirmed stay in the outbox and are sent again; no duplicates (SYNC-14) | M3a |
 | C13 | A pull starts; the person changes an item's amount to buy (counter 50); the pull's page brings the same item at counter 30 | The saved version stays on screen | M2b |
-| C14 | Maria's ticks are waiting; Diego signs in on her phone | Only Diego's operations are sent; Maria's are kept (SYNC-52); an operation sent with Maria's `personId` under Diego's session would be `refused` | M3 |
-| C15 | One operation in a batch is refused (the list is full) | The others apply; the refused one is undone on the phone with its reason | M3 |
-| C16 | A phone's cursor is below `purged_through` | `410`; the outbox is sent first, then a full re-download | M3 |
+| C14 | Maria's ticks are waiting; Diego signs in on her phone | Only Diego's operations are sent; Maria's are kept (SYNC-52); an operation sent with Maria's `personId` under Diego's session would be `refused` | M3a |
+| C15 | One operation in a batch is refused (the list is full) | The others apply; the refused one is undone on the phone with its reason | M3a |
+| C16 | A phone's cursor is below `purged_through` | `410`; the outbox is sent first, then a full re-download | M3a |
 | C17 | From v1: a phone on a contract version from 3 weeks ago sends ticks and pulls, after two releases | Both accepted (UPD-04) | M13 |
+
+## Open points
+
+Opened on 2026-11-15 ([milestones.md, open points](milestones.md#open-points-for-the-author)); the author decides.
+
+1. **Undo after Clear list and Clear this week** (SHOP-40, PLAN-36). C6 covers the removal, but nothing here says how the lines come back within the 8 seconds: with their old ids and a new counter (and then what a phone does with a tombstone followed by the same id), or as new lines. The answer becomes example C18, proven in M2b, and is needed before that milestone starts.
+2. **What "never changes" allows (§7).** The outbox format is frozen from the first release (M4b), but X3, X4 and X7 are first proven in M7. Every operation already carries `v`. The rule could be that the server accepts every `v` ever released, which is what the contract tests prove, with a new `v` needing an ADR. Either way, this section should say whether a new optional field or a new operation type counts as a change.

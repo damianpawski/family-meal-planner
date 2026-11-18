@@ -26,7 +26,7 @@ What this rules out, for the record:
 | ImageSharp | The Six Labors Split Licence isn't on the list. |
 | MediatR, AutoMapper | Dual RPL-1.5 or commercial since July 2025. Minimal API handlers and explicit mapping need neither. |
 
-**Still open: photo processing (M10).** The architecture names NetVips, which is MIT and reads HEIC through libvips. But the package that carries libvips's native binaries, `NetVips.Native`, is licensed LGPL-3.0-or-later (checked 2026-11-12), so it fails the `src/` list as written. When M10 starts, a new record decides it, amending this one: an exception for native libraries that run only on the server, are loaded dynamically and never reach a browser, or another library.
+**Still open: photo processing (decided in M4a, built in M10).** The architecture names NetVips, which is MIT and reads HEIC through libvips. But the package that carries libvips's native binaries, `NetVips.Native`, is licensed LGPL-3.0-or-later (checked 2026-11-12), so it fails the `src/` list as written. When M4a builds the server's image, a new record decides it, amending this one, because the answer may put a native library into that image: an exception for native libraries that run only on the server, are loaded dynamically and never reach a browser, or another library.
 
 **Keeping packages honest**
 - **One source:** `nuget.config` clears every other source and maps every package to nuget.org, so a package can't be swapped in from elsewhere.

@@ -7,7 +7,7 @@ How code, tests, commits and pull requests are written in this repo. Draft 2 · 
 - **Vertical slices** on the server: `Features/<Area>/<UseCase>/` holds the endpoint, request, handler, validator and tests for one use case ([architecture §1](../spec/architecture.md#1-shape-of-the-system)). Shared domain types live in `Domain/`.
 - **Style** is in `.editorconfig` and enforced in the build: rules set to `warning` fail it, because warnings are errors.
 - **Comments** say why, not what. A comment that repeats the code is deleted.
-- **C# 15 features** are used where they make the code clearer. Notes on closed hierarchies and union types are added here when the first code that uses them arrives (M3, M7).
+- **C# 15 features** are used where they make the code clearer. Notes on closed hierarchies and union types are added here when the first code that uses them arrives (M3a, M7).
 
 ## Tests
 

@@ -283,7 +283,7 @@ Requests and details agreed in conversation, to be written up properly in their 
 - **Chapter 5, shopping list:** extra items are typed in by hand, online or offline (SYNC-02); they go in "Other" unless an aisle is picked.
 - **Chapter 5, shopping list:** a single **Clear list** button (it's in the Week Plan design). It asks "Clear the whole list?" first, offers Undo for a few seconds, and needs a connection, because it removes everyone's items at once. It removes **everything**: ticked and unticked, from dishes and extras (the author, 2026-10-06).
 - **Chapter 2, accounts:** written up in chapter 2 (ACC-10, ACC-11).
-- **Chapter 8, non-functional (raised 2026-10-13 by the delivery-milestones work):** speed targets for the Galaxy A5 and a photo storage budget (SYNC-04), so CI has numbers to enforce; requirement ids for deploys and backups (milestone M4); the terms text people agree to on joining (ACC-22, milestone M1); the format of the data download (ACC-43).
+- **Chapter 8, non-functional (raised 2026-10-13 by the delivery-milestones work):** speed targets for the Galaxy A5 and a photo storage budget (SYNC-04), so CI has numbers to enforce; requirement ids for deploys and backups (milestone M4a); the terms text people agree to on joining (ACC-22, milestone M1a); the format of the data download (ACC-43).
 - **Chapter 6, rating (agreed with the author, 2026-10-06):** everyone in the family can rate, so rating isn't behind a permission. Each person gives one rating per planned dish (each time it's served) and can change it; the newest replaces the old. Answers: **Loved it / OK / Not again**. The recipe box ♥ counts the people whose latest rating of that dish is "Loved it". Planning shows hints like "Leo: Not again". Rating is offered at the end of cook mode and on the slot afterwards. Rating opens on the slot's date and doesn't need "cooked" to be marked first (DOM-26, 2026-10-08).
 
 ### 0.5 Open questions
@@ -326,21 +326,21 @@ Every screen opens and shows the family's data with no connection. In the shop w
 
 | # | Situation | Result | Proven in |
 |---|---|---|---|
-| X1 | Maria ticks "Milk" offline at 10:00 (sent at 11:00); Diego unticks it online at 10:30 | Unticked: 10:30 is the latest change (SYNC-15) | M3 |
-| X2 | Maria ticks "Milk" offline at 10:00; Diego ticks it online at 10:30 | Ticked once; nothing is doubled | M3 |
+| X1 | Maria ticks "Milk" offline at 10:00 (sent at 11:00); Diego unticks it online at 10:30 | Unticked: 10:30 is the latest change (SYNC-15) | M3a |
+| X2 | Maria ticks "Milk" offline at 10:00; Diego ticks it online at 10:30 | Ticked once; nothing is doubled | M3a |
 | X3 | Maria sees "500 g Minced beef" offline and ticks it at 10:00; at 10:15 Carlos adds a dish needing 300 g more | One ticked line "500 g Minced beef" and a new unticked line "300 g Minced beef" (DOM-22). Works because an unticked line keeps its id when it changes (architecture §3) | M7 |
 | X4 | Maria ticks "Sour cream" offline; meanwhile Carlos takes the only dish needing it off the list | The tick is dropped quietly (SYNC-17) | M7 |
-| X5 | Maria and Diego, both offline, each add "Milk 1 l"; there's no Milk line yet | Each phone shows its own line until it syncs; after both sync, one unticked line "2 l Milk" listing both people (SYNC-16, DOM-23) | M3 |
-| X6 | Maria and Diego, both offline, each add "Bread" with no amount | Two separate "Bread" lines (DOM-23) | M3 |
+| X5 | Maria and Diego, both offline, each add "Milk 1 l"; there's no Milk line yet | Each phone shows its own line until it syncs; after both sync, one unticked line "2 l Milk" listing both people (SYNC-16, DOM-23) | M3a |
+| X6 | Maria and Diego, both offline, each add "Bread" with no amount | Two separate "Bread" lines (DOM-23) | M3a |
 | X7 | "150 g Butter, for Apple crumble" plus Maria's extra 200 g shows as "350 g Butter"; Maria removes her extra | "150 g Butter, for Apple crumble" (DOM-23) | M7 |
-| X8 | Diego's phone clock is 2 hours fast. At a real 10:30 he ticks "Eggs" offline and stays offline until 11:30; Maria unticks at 11:00 | Diego's phone knows from its last server response that it's 2 hours fast, so it stamps 10:30, and Maria's 11:00 untick wins (1.9, question 7). A time still in the future when it arrives is clamped to the server's time | M3 |
-| X9 | Maria's phone clock is 1 hour slow; she unticks "Eggs" at a real 11:00 after Diego ticked at 10:30 | Her phone knows it's 1 hour slow and stamps 11:00, so her untick wins: unticked (1.9, question 7) | M3 |
-| X10 | Maria saw "500 g" and ticked offline, but the line shrank to 200 g before her tick arrived | "500 g ticked": the tick records what she bought, and the surplus stays bought (1.9, question 4) | M3 |
-| X11 | Maria removes her merged extra offline, but Diego ticked the whole line before her removal arrived | Her removal is dropped, and her phone says "Diego already bought it" (1.9, question 5) | M3 |
-| X12 | A tick and an untick of the same line carry exactly the same time | The one with the later operation id wins, the same way every time (1.9, question 6) | M3 |
-| X13 | Diego added "Butter 150 g" earlier. Maria, offline in the shop, adds "Butter 200 g", takes it and ticks it | Her tick points at her extra, not at a line. On the server her extra merges into Diego's line, and her tick becomes a DOM-22 split: "200 g Butter" ticked, "150 g Butter" still to buy. Without this, the tick would point at a line that never existed and be dropped, and the app would tell her to buy butter she already has | M3 |
-| X14 | Maria, offline, adds "Milk 1 l"; meanwhile Diego, online, adds Milk for the first time in pcs, which sets its unit kind (DOM-08) | Maria's extra is kept as "Milk" without an amount, and her phone says "Milk is counted in pcs, so the amount was left off". Nothing she added disappears from the list in the shop | M3 |
-| X15 | The list has 299 lines (LIM-10: 300). Maria's waiting changes are 4 ticks and 2 new extras | The ticks and the first extra apply; the second extra is refused with "The list is full" and undone on her phone. A refused change never stops the others | M3 |
+| X8 | Diego's phone clock is 2 hours fast. At a real 10:30 he ticks "Eggs" offline and stays offline until 11:30; Maria unticks at 11:00 | Diego's phone knows from its last server response that it's 2 hours fast, so it stamps 10:30, and Maria's 11:00 untick wins (1.9, question 7). A time still in the future when it arrives is clamped to the server's time | M3a |
+| X9 | Maria's phone clock is 1 hour slow; she unticks "Eggs" at a real 11:00 after Diego ticked at 10:30 | Her phone knows it's 1 hour slow and stamps 11:00, so her untick wins: unticked (1.9, question 7) | M3a |
+| X10 | Maria saw "500 g" and ticked offline, but the line shrank to 200 g before her tick arrived | "500 g ticked": the tick records what she bought, and the surplus stays bought (1.9, question 4) | M3a |
+| X11 | Maria removes her merged extra offline, but Diego ticked the whole line before her removal arrived | Her removal is dropped, and her phone says "Diego already bought it" (1.9, question 5) | M3a |
+| X12 | A tick and an untick of the same line carry exactly the same time | The one with the later operation id wins, the same way every time (1.9, question 6) | M3a |
+| X13 | Diego added "Butter 150 g" earlier. Maria, offline in the shop, adds "Butter 200 g", takes it and ticks it | Her tick points at her extra, not at a line. On the server her extra merges into Diego's line, and her tick becomes a DOM-22 split: "200 g Butter" ticked, "150 g Butter" still to buy. Without this, the tick would point at a line that never existed and be dropped, and the app would tell her to buy butter she already has | M3a |
+| X14 | Maria, offline, adds "Milk 1 l"; meanwhile Diego, online, adds Milk for the first time in pcs, which sets its unit kind (DOM-08) | Maria's extra is kept as "Milk" without an amount, and her phone says "Milk is counted in pcs, so the amount was left off". Nothing she added disappears from the list in the shop | M3a |
+| X15 | The list has 299 lines (LIM-10: 300). Maria's waiting changes are 4 ticks and 2 new extras | The ticks and the first extra apply; the second extra is refused with "The list is full" and undone on her phone. A refused change never stops the others | M3a |
 
 ### 1.4 Online changes
 

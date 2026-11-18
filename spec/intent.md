@@ -1,6 +1,6 @@
 # Intent: family meal planner
 
-Status: draft 1 · 2026-10-06 · owner: the author
+Status: draft 1 · 2026-10-06 (the offline principle brought in line with the spec on 2026-11-15) · owner: the author
 
 ## Why this exists
 
@@ -25,7 +25,7 @@ Every family member has their own account and signs in with email and password. 
 ## Principles
 
 - **Phone first.** Designed for a small, older Android phone (Galaxy A5, 360 px wide) held in one hand in a supermarket aisle. Larger screens get the same app with more room.
-- **Works offline.** The shop basement with no signal is the main use case for the list. Every screen works offline; changes save on the phone first and sync when there's a connection. Nothing is ever lost because the network dropped.
+- **Works offline.** The shop basement with no signal is the main use case for the list. Every screen opens offline. Ticking the shopping list and adding to it work offline and sync when there's a connection; planning and recipe edits need a connection in the first version, and the app says so (decided 2026-10-06, [spec decisions log](spec.md#decisions-log)). Nothing is ever lost because the network dropped.
 - **One codebase, every device.** One app runs on Android, iPhone, tablets and desktop browsers, installable to the home screen. No separate native apps to maintain.
 - **Shared, not bossy.** The family plans together. Everyone in the family has the same rights; one owner manages who's in it and which day the week starts.
 - **Quick over complete.** A dish can be just a name to start with; ingredients and steps can come later. Three dishes is enough to plan a first week.

@@ -10,12 +10,12 @@ A record is **Proposed** until the author agrees with it, and can still be edite
 | 2 | [One origin and cookie authentication over JWTs](0002-one-origin-cookie-auth.md) | Proposed |
 | 3 | Offline edits limited to shopping in v1 | Written in M2a |
 | 4 | IndexedDB over SQLite in WebAssembly | Written in M2a |
-| 5 | Change feed with a per-family counter under a row lock | Written in M2a |
-| 6 | Family isolation through a global query filter | Written in M1 |
+| 5 | Change feed with a per-family counter under a row lock | Written in M1a |
+| 6 | Family isolation through a global query filter | Written in M1a |
 | 7 | [Aspire for local development, Docker Compose in production](0007-aspire-locally-compose-in-production.md) | Proposed |
 | 8 | One unit kind per grocery, amounts stored in base units | Written in M2a |
 | 9 | The live shopping list built from item sources | Written in M7 |
-| 10 | Family id in every key and foreign key | Written in M1 |
+| 10 | Family id in every key and foreign key | Written in M1a |
 | 11 | No step timers in v1 | Written in M9 |
 | 12 | [Licence policy and supply chain](0012-licence-and-supply-chain.md) | Proposed |
 | 13 | [snake_case database names through EFCore.NamingConventions](0013-snake-case-database-names.md) | Proposed |
