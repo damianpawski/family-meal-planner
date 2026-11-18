@@ -1,6 +1,6 @@
 # Intent: family meal planner
 
-Status: draft 1 · 2026-10-06 (the offline principle brought in line with the spec on 2026-11-15) · owner: the author
+Status: draft 1 · 2026-10-06 (the offline principle brought in line with the spec, and iPhone left out of the first version, on 2026-11-15) · owner: the author
 
 ## Why this exists
 
@@ -26,7 +26,7 @@ Every family member has their own account and signs in with email and password. 
 
 - **Phone first.** Designed for a small, older Android phone (Galaxy A5, 360 px wide) held in one hand in a supermarket aisle. Larger screens get the same app with more room.
 - **Works offline.** The shop basement with no signal is the main use case for the list. Every screen opens offline. Ticking the shopping list and adding to it work offline and sync when there's a connection; planning and recipe edits need a connection in the first version, and the app says so (decided 2026-10-06, [spec decisions log](spec.md#decisions-log)). Nothing is ever lost because the network dropped.
-- **One codebase, every device.** One app runs on Android, iPhone, tablets and desktop browsers, installable to the home screen. No separate native apps to maintain.
+- **One codebase, Android and desktop first.** One app runs on Android phones and tablets and in desktop browsers, installable to the home screen. No separate native apps to maintain. iPhone isn't a target for the first version (below).
 - **Shared, not bossy.** The family plans together. Everyone in the family has the same rights; one owner manages who's in it and which day the week starts.
 - **Quick over complete.** A dish can be just a name to start with; ingredients and steps can come later. Three dishes is enough to plan a first week.
 
@@ -43,6 +43,7 @@ Every family member has their own account and signs in with email and password. 
 - Grocery delivery or price comparison.
 - Importing recipes from a link or photo (a good later addition).
 - Native app-store builds (the architecture keeps this possible later).
+- iPhone. The app may open in Safari, but it isn't tested or supported in the first version, and the iPhone-only install help and notification note come later.
 - Multiple families per account at the same time (an account belongs to one family; it can leave and join another).
 
 ## Sources

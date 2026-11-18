@@ -48,6 +48,7 @@ Intent: [intent.md](intent.md) · Stack review: [approach-review.md](approach-re
 | 2026-11-10 | **Before v1, only the outbox format is kept stable.** Until the v1 release, waiting ticks and extras from any earlier version are always accepted, but other changes may ask an old phone to update (UPD-05). The full 30-day rule for every request (UPD-04) starts with v1. |
 | 2026-11-10 | **Shopping sync details settled** (1.9, questions 4 to 7): a tick records the amount seen; removing an already-bought extra is dropped with a reason; ties go to the later operation id; phones correct their clock by the server's. An extra whose unit doesn't fit its grocery is kept without its amount (X14). |
 | 2026-11-10 | **The 15-minute lockout stays** (ACC-31). Someone could lock another person out on purpose, but a phone that's already signed in keeps working, so the risk is small, and the lockout built into ASP.NET Identity needs no custom code. |
+| 2026-11-15 | **iPhone isn't a v1 target.** v1 is built and accepted for Android phones (the Galaxy A5) and desktop browsers, and the end-to-end tests run on Chromium only. The app may still open on an iPhone, but nothing is tested or promised there, and the iPhone-only install help and notification note (INST-03, NOTE-11) are LATER. |
 
 ## Chapters
 
@@ -1022,7 +1023,7 @@ The app nudges the family at the few moments that matter (plan next week, what's
 | ID | Requirement |
 |---|---|
 | NOTE-01 | MUST: notification settings are **per person** (Family tab › Notifications) and apply to every phone where that person has allowed notifications. They change only with a connection (SYNC-03). A new person starts with only the planning reminder on, set to the evening before the family's week start day; everything else is off. |
-| NOTE-02 | MUST: the app never asks for notification permission on first open. It asks when the person first turns a notification on. If the browser has blocked notifications, the screen says "Notifications are blocked for this app in your browser settings" with short steps for Android and iPhone. |
+| NOTE-02 | MUST: the app never asks for notification permission on first open. It asks when the person first turns a notification on. If the browser has blocked notifications, the screen says "Notifications are blocked for this app in your browser settings" with short steps for Android. |
 | NOTE-03 | MUST: **Planning reminder**, "Nudge me to fill next week": a day (M–S) and a time (**Morning** 09:00, **5 pm**, **Evening** 19:00) in the family time zone (DOM-24). It is sent only when next week has empty, not-skipped slots: "Next week has 6 of 21 meals planned. Plan it now?" |
 | NOTE-04 | MUST: **Someone adds a dish** to this week's plan: "Diego added Taco night to Tue dinner". |
 | NOTE-05 | MUST: **Week is fully planned**: "Next week is planned: 21 of 21", once per week. |
@@ -1031,7 +1032,7 @@ The app nudges the family at the few moments that matter (plan next week, what's
 | NOTE-08 | MUST: nobody is notified about their own changes. Notifications about the plan and the list are **batched**: changes within 10 minutes of each other go in one notification. |
 | NOTE-09 | MUST: **quiet hours** from 21:00 to 07:00 in the family time zone. Batched notifications wait until 07:00; reminders aren't offered at those times. |
 | NOTE-10 | MUST: tapping a notification opens the right place: the week, the slot, the shopping list or tonight's dinner. |
-| NOTE-11 | MUST: on iPhone, notifications work only once the app is on the home screen (iOS 16.4 or later). The Notifications screen says so and links to the install steps (INST-03). |
+| NOTE-11 | LATER: on iPhone, notifications work only once the app is on the home screen (iOS 16.4 or later); the Notifications screen would say so and link to the install steps (INST-03). Not in v1, because iPhone isn't a v1 target (the author, 2026-11-15). |
 | NOTE-12 | MUST: each phone registers for notifications on its own. Signing out (SYNC-53) or being removed from the family (SYNC-54) stops notifications to that phone. A phone that stops accepting them is forgotten by the server. |
 | NOTE-13 | MUST: there are no email notifications; email is only for accounts (chapter 2). |
 
@@ -1039,9 +1040,9 @@ The app nudges the family at the few moments that matter (plan next week, what's
 
 | ID | Requirement |
 |---|---|
-| INST-01 | MUST: the app works fully in the browser, but installing is recommended: it opens faster, works offline in the shop more reliably, and on iPhone is needed for notifications. |
+| INST-01 | MUST: the app works fully in the browser, but installing is recommended: it opens faster and works offline in the shop more reliably. |
 | INST-02 | MUST: on Android, after first sign-in, a card on the Week tab says "Put Meal planner on your home screen. It opens like an app and works in the shop with no signal." with **Install** (the browser's install dialog) and **Not now**, which hides it for 14 days. The card never shows once the app is installed. |
-| INST-03 | MUST: on iPhone, the same card shows **How?**, which explains Share › Add to Home Screen with a picture, because Safari has no install button. |
+| INST-03 | LATER: on iPhone, the install card shows **How?**, which explains Share › Add to Home Screen with a picture, because Safari has no install button. Not in v1, because iPhone isn't a v1 target (the author, 2026-11-15). |
 | INST-04 | MUST: installed, the app opens on the Week tab, full screen with no browser bar, with its own icon, name and splash screen in the app colours. |
 | INST-05 | LATER: a Play Store listing that wraps the same app. |
 

@@ -283,10 +283,10 @@ Photos (M10) can swap places with anything after M5a. Notifications (M11) can sw
 
 **Scope**
 - App updates: update bar, never reloading mid-edit, waiting changes kept through an update, "Update needed to sync". Proven with the contract's example C10.
-- The install card on Android and the How? card on iPhone.
+- The install card on Android. The iPhone How? card is LATER, because iPhone isn't a v1 target.
 - `navigator.storage.persist()` on first sign-in. Chrome can refuse it for a site that isn't installed or much used; what the app says then is added to [spec 7.3](spec.md#73-home-screen-install) first (one line in the install card would do).
 
-**Requirements:** [SYNC-11](spec.md#13-offline-shopping-changes) (through an update), [UPD-01](spec.md#74-app-updates) to [UPD-03](spec.md#74-app-updates), [UPD-05](spec.md#74-app-updates), [INST-01](spec.md#73-home-screen-install) to [INST-03](spec.md#73-home-screen-install).
+**Requirements:** [SYNC-11](spec.md#13-offline-shopping-changes) (through an update), [UPD-01](spec.md#74-app-updates) to [UPD-03](spec.md#74-app-updates), [UPD-05](spec.md#74-app-updates), [INST-01](spec.md#73-home-screen-install), [INST-02](spec.md#73-home-screen-install).
 
 **Scenarios:** Ticks made offline survive an update.
 
@@ -295,7 +295,7 @@ Photos (M10) can swap places with anything after M5a. Notifications (M11) can sw
 2. Leave a sheet open while a new version becomes ready: nothing reloads.
 3. First sign-in on a fresh phone shows the install card; Not now hides it.
 
-**Screens to accept:** update bar, "Update needed to sync", install card and the iPhone How? sheet. **Design missing** (due when this milestone's plan is written): the install prompt ([UI review section 3](../reviews/ui-review-2026-10-05.md#3-missing-screens-third-pass-after-family-settings-2026-10-05), item 4).
+**Screens to accept:** update bar, "Update needed to sync", install card. **Design missing** (due when this milestone's plan is written): the install prompt ([UI review section 3](../reviews/ui-review-2026-10-05.md#3-missing-screens-third-pass-after-family-settings-2026-10-05), item 4).
 
 ---
 
@@ -509,7 +509,7 @@ Photos (M10) can swap places with anything after M5a. Notifications (M11) can sw
 **Goal:** the app nudges the family at the few moments that matter and is quiet otherwise.
 
 **Scope**
-- Per-person settings, permission asked on first switch-on, Web Push with VAPID, one subscription per phone; planning reminder, someone added a dish, week fully planned, list changes, Cook tonight; 10-minute batches, quiet hours, never your own changes; deep links; the iPhone home-screen note; restart-safe jobs.
+- Per-person settings, permission asked on first switch-on, Web Push with VAPID, one subscription per phone; planning reminder, someone added a dish, week fully planned, list changes, Cook tonight; 10-minute batches, quiet hours, never your own changes; deep links; restart-safe jobs.
 - Signing out unsubscribes the phone from push locally first, so it works offline: a wiped phone stops receiving family notifications even if the server never hears about the sign-out ([architecture 5](architecture.md#5-other-infrastructure)).
 - **Isolation:** the background jobs (reminders, Cook tonight, batches) are covered by the family isolation tests: a job working for one family never reads or notifies another family's people.
 - **A clock you can move, for trying it locally:** a development-only clock offset that the server's `TimeProvider` reads from a setting, so it survives a restart (Try 5). The server refuses to start in Production with an offset set.
@@ -517,7 +517,7 @@ Photos (M10) can swap places with anything after M5a. Notifications (M11) can sw
 - **A seam for tests:** the sender sits behind an interface. Automated tests assert what would be sent, to whom and when (with `FakeTimeProvider` for batches, quiet hours and daylight-saving changes); one real notification on the A5 is the manual part of acceptance, because Playwright can't receive a push.
 - Showing a notification and opening the right place on a tap is a third job for the service worker, after caching and the outbox sender. The M3b scenario "Ticks made offline survive an update" is run again with the new worker.
 
-**Requirements:** [NOTE-01](spec.md#72-notifications) to [NOTE-13](spec.md#72-notifications).
+**Requirements:** [NOTE-01](spec.md#72-notifications) to [NOTE-13](spec.md#72-notifications), except NOTE-11, which is LATER (iPhone).
 
 **Scenarios:** Planning reminder when next week isn't planned · No reminder when the week is planned · Batched list changes, not your own · Quiet hours.
 
@@ -529,7 +529,7 @@ Photos (M10) can swap places with anything after M5a. Notifications (M11) can sw
 5. Set the clock to Sunday 18:59 with next week half planned, restart the app at 19:00: exactly one planning reminder.
 6. Sign out on the phone, once online and once in airplane mode: no more notifications there either way.
 
-**Screens to accept:** Notifications settings (from "Family Settings"), blocked-notifications help, iPhone note.
+**Screens to accept:** Notifications settings (from "Family Settings"), blocked-notifications help.
 
 ---
 
@@ -572,13 +572,13 @@ Photos (M10) can swap places with anything after M5a. Notifications (M11) can sw
 
 ## Requirement coverage
 
-Every MUST and SHOULD in spec.md chapters 0 to 8.1 is in at least one milestone above. Requirements that grow over several milestones ([SYNC-01](spec.md#12-what-works-offline), [SYNC-04](spec.md#12-what-works-offline), [SEC-01](spec.md#81-input-safety), [SEC-10](spec.md#81-input-safety), [DOM-10](spec.md#03-rules-that-are-always-true)) are tested again in each one that adds a screen or endpoint. LATER items are out: [COOK-10](spec.md#63-timers-later) (timers), [INST-05](spec.md#73-home-screen-install) (Play Store), [LIM-06](spec.md#03b-limits).
+Every MUST and SHOULD in spec.md chapters 0 to 8.1 is in at least one milestone above. Requirements that grow over several milestones ([SYNC-01](spec.md#12-what-works-offline), [SYNC-04](spec.md#12-what-works-offline), [SEC-01](spec.md#81-input-safety), [SEC-10](spec.md#81-input-safety), [DOM-10](spec.md#03-rules-that-are-always-true)) are tested again in each one that adds a screen or endpoint. LATER items are out: [COOK-10](spec.md#63-timers-later) (timers), [INST-03](spec.md#73-home-screen-install) and [NOTE-11](spec.md#72-notifications) (iPhone), [INST-05](spec.md#73-home-screen-install) (Play Store), [LIM-06](spec.md#03b-limits).
 
 ## Open points for the author
 
 Raised by [milestones-review.md](milestones-review.md) on 2026-11-15. Each changes a decision already recorded, or makes a new one, so they're listed here instead of being applied.
 
-1. **iPhone in v1.** The intent, INST-03 and NOTE-11 promise iPhone, but every acceptance step is the Galaxy A5 and Chromium. Either the intent and M13 say "iPhone: best effort, not accepted in v1", or the E2E suite also runs on Playwright's WebKit from M0 and a real iPhone gets Try it steps in M3a, M3b and M11.
+1. ~~**iPhone in v1.**~~ Decided by the author 2026-11-15: iPhone isn't needed in v1. v1 is built and accepted for Android (the Galaxy A5) and desktop browsers, the end-to-end tests run on Chromium only, and INST-03 and NOTE-11 are LATER ([spec decision log](spec.md#decisions-log)).
 2. **The cut line.** If time runs short, which milestones make v1? The intent's success criteria need M0 to M8. M9 to M12 could each follow v1 without breaking the others.
 3. **What "the outbox format never changes" allows** ([sync contract §7](sync-contract.md#7-versions-and-sessions)). The format is frozen at M4b, but X3, X4 and X7 are first proven in M7. Every operation carries `v`: the rule could instead be that the server accepts every `v` ever released, which is what the contract tests prove, with a new `v` needing an ADR. Either way, say whether a new optional field or a new operation type counts as a change.
 4. **How Undo works** after Clear list (M2b) and Clear this week (M8): the lines come back with their old ids and a new counter, or as new lines. Needed before M2b.
