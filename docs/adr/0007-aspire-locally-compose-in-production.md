@@ -1,6 +1,6 @@
 # ADR 7: Aspire for local development, Docker Compose in production
 
-Status: **Proposed** · 2026-11-12 · decided 2026-10-06 ([approach review §3](../../spec/approach-review.md#3-should-you-use-aspire)), detailed in the [M0 plan](../plan/M0.md) (decisions D6 and D7)
+Status: **Accepted** 2026-11-18 · written 2026-11-12 · decided 2026-10-06 ([approach review §3](../../spec/approach-review.md#3-should-you-use-aspire)), detailed in the [M0 plan](../plan/M0.md) (decisions D6 and D7)
 
 ## Context
 

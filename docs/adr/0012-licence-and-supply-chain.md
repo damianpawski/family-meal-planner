@@ -1,6 +1,6 @@
 # ADR 12: Licence policy and supply chain
 
-Status: **Proposed** · 2026-11-12 · licence rules from architecture draft 2 (2026-10-13), extended 2026-11-09; supply-chain rules decided 2026-11-10 (M0 plan, decisions D3 and D11)
+Status: **Accepted** 2026-11-18 · written 2026-11-12 · licence rules from architecture draft 2 (2026-10-13), extended 2026-11-09; supply-chain rules decided 2026-11-10 (M0 plan, decisions D3 and D11)
 
 ## Context
 

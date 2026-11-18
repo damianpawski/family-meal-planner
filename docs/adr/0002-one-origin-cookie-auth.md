@@ -1,6 +1,6 @@
 # ADR 2: One origin and cookie authentication over JWTs
 
-Status: **Proposed** · 2026-11-12 · decided 2026-10-06 ([approach review §4](../../spec/approach-review.md#4-security-for-a-public-repository)), detailed in [architecture §1 and §4](../../spec/architecture.md#4-auth)
+Status: **Accepted** 2026-11-18 · written 2026-11-12 · decided 2026-10-06 ([approach review §4](../../spec/approach-review.md#4-security-for-a-public-repository)), detailed in [architecture §1 and §4](../../spec/architecture.md#4-auth)
 
 ## Context
 

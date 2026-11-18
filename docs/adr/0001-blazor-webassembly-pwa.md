@@ -1,6 +1,6 @@
 # ADR 1: Blazor WebAssembly PWA over a JavaScript framework
 
-Status: **Proposed** · 2026-11-12 · decided 2026-10-06, moved to .NET 11 on 2026-11-10 ([spec decision log](../../spec/spec.md#decisions-log))
+Status: **Accepted** 2026-11-18 · written 2026-11-12 · decided 2026-10-06, moved to .NET 11 on 2026-11-10 ([spec decision log](../../spec/spec.md#decisions-log))
 
 ## Context
 

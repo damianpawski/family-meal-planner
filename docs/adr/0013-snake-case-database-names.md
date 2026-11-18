@@ -1,6 +1,6 @@
 # ADR 13: snake_case database names through EFCore.NamingConventions
 
-Status: **Proposed** · 2026-11-12 · decided 2026-10-14; EF Core version rule added 2026-11-10 ([architecture §2](../../spec/architecture.md#2-data-and-identity))
+Status: **Accepted** 2026-11-18 · written 2026-11-12 · decided 2026-10-14; EF Core version rule added 2026-11-10 ([architecture §2](../../spec/architecture.md#2-data-and-identity))
 
 ## Context
 

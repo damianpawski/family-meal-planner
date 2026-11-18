@@ -1,6 +1,6 @@
 # ADR 14: Security headers and CSP sent by the app, not the reverse proxy
 
-Status: **Proposed** · 2026-11-12 · decided 2026-11-09 (M0 plan, decision D2), detailed in [architecture §4](../../spec/architecture.md#4-auth)
+Status: **Accepted** 2026-11-18 · written 2026-11-12 · decided 2026-11-09 (M0 plan, decision D2), detailed in [architecture §4](../../spec/architecture.md#4-auth)
 
 ## Context
 
