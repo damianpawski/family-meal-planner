@@ -21,6 +21,7 @@ Planning is done, and the first milestone, M0 (a walking skeleton that installs 
 | [docs/adr/](docs/adr/README.md) | Architecture decision records |
 | [docs/conventions.md](docs/conventions.md) | How code, tests, commits and pull requests are written |
 | [docs/review/push-review.md](docs/review/push-review.md) | The review every push passes before it's published |
+| [CLAUDE.md](CLAUDE.md) | Working rules for the coding agents that build the app |
 
 ## Working on it
 
