@@ -46,6 +46,11 @@ function Get-PushedRefs {
         $commits = @(Get-GitLines @('rev-list', '--reverse', $Range))
         return [pscustomobject]@{ Branch = $Range; Tip = $commits[-1]; Shas = $commits }
     }
+    # The remote's branches are fetched first, pruning deleted ones, so the commits counted
+    # as already on the remote are the ones it really has, not a stale local copy's. When
+    # the push goes to a URL rather than a named remote, no branch matches and every
+    # commit reachable from the pushed ones is checked: slower, never weaker.
+    Invoke-Git @('fetch', '--prune', '--quiet', $RemoteName) | Out-Null
     foreach ($line in ([Console]::In.ReadToEnd() -split "`n" | Where-Object { $_.Trim() })) {
         $localRef, $localSha, $remoteRef, $remoteSha = $line.Trim() -split ' '
         if ($localSha -match '^0+$') { continue }    # deleting a branch publishes nothing

@@ -13,17 +13,24 @@ $script:PassTitles = @{ sensitive = 'Sensitive data'; developer = 'Senior develo
 $script:ReviewDefinition = @('docs/review/push-review.md', '.claude/agents/push-reviewer.md', '.githooks/review-result.schema.json')
 $script:ImageExtensions = @('.png', '.jpg', '.jpeg', '.gif', '.webp', '.bmp', '.ico')
 $script:PassTimeout = [TimeSpan]::FromMinutes(30)
+# This file's own path, captured when it's loaded: it builds the prompt and checks the
+# answers, so its content is part of the review's cache key.
+$script:AiReviewFile = $PSCommandPath
 
 # --- Cache keys ---------------------------------------------------------------------------
 
 function Get-ChecklistVersion([string] $TipSha) {
-    # The review is defined by these files as pushed; changing any of them is a new checklist.
+    # Everything that can change a review's answer: the checklist, the agent (with its
+    # model) and the result schema as pushed, this script as it runs here, and the Claude
+    # Code version. A change to any of them means a fresh review, never a stored answer.
     $ids = foreach ($path in $script:ReviewDefinition) {
         $result = Invoke-Git @('rev-parse', "${TipSha}:$path") -AllowFailure
         if ($result.ExitCode -ne 0) { throw "$path isn't in the commits being pushed, so the AI review can't run." }
         $result.StdOut.Trim()
     }
-    $ids -join ','
+    $scriptHash = (Get-FileHash -LiteralPath $script:AiReviewFile -Algorithm SHA256).Hash
+    $claude = (Invoke-Native -FilePath $script:ClaudeExe -ArgumentList @('--version')).StdOut.Trim()
+    (@($ids) + $scriptHash + $claude) -join ','
 }
 
 function Remove-ReviewNotes([string] $Message) {

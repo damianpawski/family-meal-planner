@@ -254,8 +254,12 @@ function Test-CommitFormat([object[]] $Commits) {
 
 # --- F5: every commit builds and its unit tests pass ------------------------------------
 
+# This file's own path, captured when it's loaded: its content is part of F5's cache key.
+$script:FixedChecksFile = $PSCommandPath
+
 function Test-Build([object[]] $Commits, [string] $StateDirectory) {
     $dotnet = $null
+    $buildSetup = $null
     $builtDirectory = Join-Path $StateDirectory 'built-trees'
     foreach ($commit in $Commits) {
         $solution = Get-GitLines @('ls-tree', '--name-only', $commit.Sha) | Where-Object { $_ -match '\.slnx?$' } | Select-Object -First 1
@@ -263,14 +267,19 @@ function Test-Build([object[]] $Commits, [string] $StateDirectory) {
             Write-Host "  F5 $($commit.Short): skipped, no solution file yet (documents only)"
             continue
         }
-        # The same tree builds the same way, so a tree that built before isn't built again.
-        $marker = Join-Path $builtDirectory $commit.Tree
+        # A tree that built and passed before isn't built again, as long as nothing else
+        # that decides the result has changed: the SDK in use and this check's own script
+        # (its build and test commands). Packages are pinned by the tree's lock files.
+        $dotnet ??= Resolve-Executable 'dotnet'
+        $buildSetup ??= "$((Invoke-Native -FilePath $dotnet -ArgumentList @('--version') -WorkingDirectory $script:RepoRoot).StdOut.Trim())`n" +
+            (Get-FileHash -LiteralPath $script:FixedChecksFile -Algorithm SHA256).Hash
+        $marker = Join-Path $builtDirectory ([Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData(
+                    [System.Text.Encoding]::UTF8.GetBytes("$($commit.Tree)`n$buildSetup"))).ToLower())
         if (Test-Path $marker) {
-            Write-Host "  F5 $($commit.Short): passed before for this exact content"
+            Write-Host "  F5 $($commit.Short): passed before for this exact content and build setup"
             continue
         }
 
-        $dotnet ??= Resolve-Executable 'dotnet'
         Write-Host "  F5 $($commit.Short): building in a clean worktree..."
         $worktree = New-TemporaryWorktree $commit.Sha 'build'
         try {
@@ -309,7 +318,9 @@ function Get-Tail([string] $Text, [int] $Lines = 30) {
 
 # --- F6: forbidden files and values -----------------------------------------------------
 
-$script:SecretKeyPattern = 'password|secret|token|apikey|api_key|clientsecret|connectionstring'
+# Key names are compared with separators removed, so api-key, api_key, apiKey and
+# Connection-String all match. client_secret matches through "secret".
+$script:SecretKeyPattern = 'password|secret|token|apikey|connectionstring'
 
 function Test-ForbiddenPath([string] $Path) {
     $name = Split-Path $Path -Leaf
@@ -343,7 +354,7 @@ function Find-SecretValues([object] $Node, [string] $Path) {
             $keyPath = if ($Path) { "$Path.$key" } else { "$key" }
             $value = $Node[$key]
             $holdsValue = ($value -is [string] -and $value -ne '') -or ($value -is [ValueType] -and $value -isnot [bool])
-            if ($key -match $script:SecretKeyPattern -and $holdsValue) { $keyPath }
+            if (($key -replace '[-_.\s]', '') -match $script:SecretKeyPattern -and $holdsValue) { $keyPath }
             Find-SecretValues $value $keyPath
         }
     }
