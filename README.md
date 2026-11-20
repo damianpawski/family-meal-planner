@@ -38,4 +38,4 @@ Planning is done, and the first milestone, M0 (a walking skeleton that installs 
 
 ## Licence
 
-No licence has been chosen yet, so all rights are reserved for now.
+The code and documents are licensed under the [MIT Licence](LICENSE).
