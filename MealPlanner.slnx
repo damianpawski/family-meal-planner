@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MealPlanner.Client/MealPlanner.Client.csproj" />
+    <Project Path="src/MealPlanner.UI/MealPlanner.UI.csproj" />
+  </Folder>
+</Solution>
