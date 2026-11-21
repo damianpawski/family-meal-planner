@@ -2,9 +2,12 @@
   <Folder Name="/src/">
     <Project Path="src/MealPlanner.Client/MealPlanner.Client.csproj" />
     <Project Path="src/MealPlanner.Data/MealPlanner.Data.csproj" />
+    <Project Path="src/MealPlanner.Server/MealPlanner.Server.csproj" />
+    <Project Path="src/MealPlanner.ServiceDefaults/MealPlanner.ServiceDefaults.csproj" />
     <Project Path="src/MealPlanner.UI/MealPlanner.UI.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/MealPlanner.IntegrationTests/MealPlanner.IntegrationTests.csproj" />
+    <Project Path="tests/MealPlanner.UnitTests/MealPlanner.UnitTests.csproj" />
   </Folder>
 </Solution>
