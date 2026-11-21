@@ -1,0 +1,28 @@
+<Project Sdk="Aspire.AppHost.Sdk/13.6.5">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net11.0</TargetFramework>
+    <!-- The dashboard and the orchestrator come from the Aspire CLI, which dotnet run fetches
+         with dnx at the version paired with Aspire.Hosting.AppHost. Without this, the SDK adds
+         their NuGet packages for the build machine's OS, so a lock file written on Windows
+         fails a locked restore on Linux (NU1004). -->
+    <AspireUseCliBundle>true</AspireUseCliBundle>
+    <AspireCliInvocationMode>DnxPinned</AspireCliInvocationMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Aspire.Hosting.PostgreSQL" />
+    <PackageReference Include="CommunityToolkit.Aspire.Hosting.MailPit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MealPlanner.Server\MealPlanner.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The same Postgres version as the integration tests, without referencing the data project. -->
+    <Compile Include="..\MealPlanner.Data\PostgresImage.cs" Link="PostgresImage.cs" />
+  </ItemGroup>
+
+</Project>
