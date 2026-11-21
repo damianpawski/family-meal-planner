@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="xunit.v3" />
   </ItemGroup>
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\MealPlanner.Data\MealPlanner.Data.csproj" />
+    <ProjectReference Include="..\..\src\MealPlanner.Server\MealPlanner.Server.csproj" />
   </ItemGroup>
 
 </Project>
