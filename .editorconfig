@@ -51,6 +51,10 @@ csharp_style_prefer_primary_constructors = true:suggestion
 # C# 15: a labeled break or continue instead of a flag variable or goto
 dotnet_diagnostic.IDE0410.severity = warning
 
+[src/MealPlanner.Data/Migrations/**.cs]
+# Written by the EF Core tools and kept as generated, so a later migration diffs cleanly.
+generated_code = true
+
 [tests/**.cs]
 # Test names start with the spec id they prove, for example SEC_02_request_over_64KB_is_refused_with_413.
 dotnet_diagnostic.CA1707.severity = none

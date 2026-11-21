@@ -13,4 +13,20 @@
     <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="11.0.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="11.0.0" />
   </ItemGroup>
+
+  <!-- EF Core stays on 10.x until EFCore.NamingConventions supports 11 (ADR 13). -->
+  <ItemGroup Label="Data">
+    <PackageVersion Include="EFCore.NamingConventions" Version="10.0.1" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.15" />
+    <!-- The provider only sets a minimum (10.0.4). Pinning the latest patch keeps every
+         project on the same EF Core, with its fixes. -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.15" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.15" />
+  </ItemGroup>
+
+  <ItemGroup Label="Tests">
+    <PackageVersion Include="Testcontainers.PostgreSql" Version="4.17.0" />
+    <PackageVersion Include="xunit.v3" Version="4.0.3" />
+  </ItemGroup>
 </Project>
