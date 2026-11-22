@@ -371,6 +371,10 @@ function Test-ForbiddenContent([object[]] $Commits) {
                 New-Failure 'F6' $commit.Short $file.Path "forbidden file: $reason"
             }
             if ($file.Path -notlike '*.json') { continue }
+            # NuGet writes packages.lock.json: its keys are package ids and its values versions
+            # and hashes, so a package such as Microsoft.Extensions.Configuration.UserSecrets
+            # would look like a secret. gitleaks (F1) still scans these files.
+            if ((Split-Path $file.Path -Leaf) -eq 'packages.lock.json') { continue }
 
             # The whole file as committed is parsed, not just the added lines, so a secret
             # can't hide in a multi-line value. Comments and trailing commas are accepted,
