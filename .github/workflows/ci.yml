@@ -97,3 +97,29 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           EXPECTED_EMAIL: ${{ github.repository_owner_id }}+${{ github.repository_owner }}@users.noreply.github.com
         run: ./.githooks/push-review.ps1 -Range "origin/$env:BASE_REF..$env:HEAD_SHA" -Ci -ExpectedEmail $env:EXPECTED_EMAIL
+
+  push-review-tests:
+    name: Push review tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PESTER_VERSION: 6.2.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # The PowerShell Gallery has no lock file, so the version is pinned here.
+      - name: Install Pester
+        shell: pwsh
+        run: Install-Module Pester -RequiredVersion $env:PESTER_VERSION -Scope CurrentUser -Force -Repository PSGallery
+
+      - name: Test the hook's own code
+        shell: pwsh
+        run: |
+          Import-Module Pester -RequiredVersion $env:PESTER_VERSION
+          $configuration = New-PesterConfiguration
+          $configuration.Run.Path = 'tests/PushReview'
+          $configuration.Run.Exit = $true
+          $configuration.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $configuration
