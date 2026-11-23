@@ -1,0 +1,52 @@
+# CI (M0 plan, task 3). Runs on every pull request and on every push to main.
+# Actions are pinned by commit id, with the release in a comment.
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# A newer push to the same pull request makes its older run pointless, so it cancels it.
+# Each run on main gets a group of its own, because GitHub also drops a run that is still
+# waiting in a group when a newer one joins it: every commit that lands on main gets a
+# finished run.
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The whole history and its tags: MinVer reads the version from them (task 7).
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: global.json
+
+      # GitHub sets CI=true, which also turns on RestoreLockedMode (Directory.Build.props):
+      # a lock file that doesn't match the projects fails here, before anything is built.
+      - name: Restore in locked mode
+        run: dotnet restore MealPlanner.slnx --locked-mode
+
+      - name: Build
+        run: dotnet build MealPlanner.slnx --configuration Release --no-restore
+
+      # Unit and integration tests. The integration tests start Postgres with
+      # Testcontainers, on the runner's Docker.
+      - name: Test
+        run: dotnet test --solution MealPlanner.slnx --configuration Release --no-build
