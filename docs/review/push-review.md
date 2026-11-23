@@ -1,6 +1,6 @@
 # Push review
 
-What every push must pass before it's published. Draft 5 · 2026-11-20 · for review by the author. The gate is built (`.githooks/`) and is switched on once the author has agreed with this checklist (M0 plan, task 1).
+What every push must pass before it's published. Draft 5 · 2026-11-20 · agreed by the author on 2026-11-20. The gate is built (`.githooks/`) and has been switched on since the first push, the same day (M0 plan, task 1).
 
 The repo is public, so a push publishes: once pushed, a commit can be copied, cached and forked even if it's removed later. The review runs on **every commit being pushed**, not only the last one.
 
