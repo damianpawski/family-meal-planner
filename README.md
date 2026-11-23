@@ -6,7 +6,7 @@ The project is spec-driven. Requirements have ids (`SYNC-15`, `SEC-02`), the tes
 
 ## Status
 
-Planning is done, and the first milestone, M0 (a walking skeleton that installs on a phone), is under way. The solution runs locally: the server hosts the template WebAssembly app and answers `GET /api/ping`, on a migrated but still empty database. The tabs, the phone install and CI follow in the next [M0 tasks](docs/plan/M0.md).
+Planning is done, and the first milestone, M0 (a walking skeleton that installs on a phone), is under way. Its progress, task by task, is in [the M0 plan](docs/plan/M0.md#progress); the [milestones overview](spec/milestones.md#overview) shows what comes after it.
 
 ## Documents
 

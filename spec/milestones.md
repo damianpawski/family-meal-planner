@@ -13,7 +13,7 @@ A milestone is done when all four are true:
 3. **By hand:** the author works through the milestone's **Try it** list, on the laptop and on the phone, and every step behaves as written.
 4. **Seed data:** `mealplanner seed-demo` is extended so the milestone can be tried on a realistic family (people Maria, Diego, Leo, Ava; dishes; a planned week) in seconds, and reset just as fast. From M5a on it can also make a family at the limits (2,000 dishes, 3,000 groceries, a 299-line shopping list), for the speed budget and the limit tests.
 
-**Working with an AI agent.** A milestone is too big for one agent run (M2a alone is a few weeks of work). At the start of each milestone the agent first writes `docs/plan/Mx.md`: an ordered list of PR-sized tasks, each naming its spec ids and tests. The author approves the list, then the agent works through it one PR at a time. The milestone is accepted as a whole, by the four checks above, once its last task is merged.
+**Working with an AI agent.** A milestone is too big for one agent run (M2a alone is a few weeks of work). At the start of each milestone the agent first writes `docs/plan/Mx.md`: an ordered list of PR-sized tasks, each naming its spec ids and tests, with a progress table that each task's PR updates ([conventions](../docs/conventions.md#branches-and-pull-requests)). The author approves the list, then the agent works through it one PR at a time. The milestone is accepted as a whole, by the four checks above, once its last task is merged.
 
 **Sizes** are relative: S, M and L. The one fixed point is that an L is a few weeks of the author's time (M2a). When M0 is accepted, the time it really took is written next to its M, and the other sizes are corrected from it.
 
