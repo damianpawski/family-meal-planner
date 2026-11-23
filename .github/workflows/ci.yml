@@ -115,7 +115,8 @@ jobs:
         with:
           persist-credentials: false
 
-      # The PowerShell Gallery has no lock file, so the version is pinned here.
+      # The PowerShell Gallery has no lock file, so the version is pinned here and in
+      # the README's command.
       - name: Install Pester
         shell: pwsh
         run: Install-Module Pester -RequiredVersion $env:PESTER_VERSION -Scope CurrentUser -Force -Repository PSGallery

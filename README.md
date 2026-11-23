@@ -44,6 +44,10 @@ Stop it with Ctrl+C. The database is kept in a Docker volume between runs (`meal
 
 **Tests:** `dotnet test` runs the unit and integration tests. The integration tests start their own Postgres container, so Docker Desktop must be running.
 
+The pre-push review's own code has [Pester](https://pester.dev) tests. Install the version CI uses once, with `Install-Module Pester -RequiredVersion 6.2.0 -Scope CurrentUser -SkipPublisherCheck` (Windows comes with Pester 3.4, signed by a different publisher, which is why the install needs the last switch), then run `Invoke-Pester tests/PushReview`.
+
+**CI** ([.github/workflows/ci.yml](.github/workflows/ci.yml)) runs on every pull request and on `main`: a locked restore, the licence check against [ADR 12](docs/adr/0012-licence-and-supply-chain.md)'s lists, the build, every test, the push review's fixed checks on the pull request's commits, and the Pester tests. The licence check runs locally the same way, after a restore: `./.github/scripts/check-licences.ps1`. Dependabot proposes package, action and SDK updates ([.github/dependabot.yml](.github/dependabot.yml)).
+
 **Commits and pull requests** follow [docs/conventions.md](docs/conventions.md): one logical change per commit, a message that says why, `Spec:` and `Task:` trailers, one pull request per plan task, and rebase-and-merge only. Before anything is pushed, the pre-push hook runs fixed checks and a four-pass AI review; CI repeats the fixed checks on every pull request.
 
 ## Licence
