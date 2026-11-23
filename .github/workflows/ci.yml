@@ -50,3 +50,50 @@ jobs:
       # Testcontainers, on the runner's Docker.
       - name: Test
         run: dotnet test --solution MealPlanner.slnx --configuration Release --no-build
+
+  fixed-checks:
+    name: Push review fixed checks
+    # The checks read a pull request's own commits. Once they're on main, GitHub has
+    # rewritten their committer and ids (docs/review/push-review.md, Part 4).
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The pull request's own commits, not the merge commit GitHub makes for it.
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: global.json
+
+      # The gitleaks release the hook's fixed checks were tested with, checked against
+      # the hash published with it.
+      - name: Install gitleaks
+        env:
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_SHA256: 551f6fc83ea457d62a0d98237cbad105af8d557003051f41f3e7ca7b3f2470eb
+        run: |
+          mkdir -p "$RUNNER_TEMP/gitleaks"
+          curl --fail --silent --show-error --location --output "$RUNNER_TEMP/gitleaks.tar.gz" \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          echo "${GITLEAKS_SHA256}  $RUNNER_TEMP/gitleaks.tar.gz" | sha256sum --check --strict
+          tar -xzf "$RUNNER_TEMP/gitleaks.tar.gz" -C "$RUNNER_TEMP/gitleaks" gitleaks
+          echo "$RUNNER_TEMP/gitleaks" >> "$GITHUB_PATH"
+
+      # F1, F2, F4, F5 and F6 on every commit in the pull request; F3's list exists only
+      # on the author's machine. The commits are counted from the base branch as just
+      # fetched, not from the event's base commit, which can be older: a branch rebased
+      # onto a newer main must not bring main's own commits, whose committer GitHub
+      # rewrote, back into the check. The expected email is the repository owner's
+      # noreply address, built from the owner's id and name, so no address is written here.
+      - name: Run the fixed checks
+        shell: pwsh
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          EXPECTED_EMAIL: ${{ github.repository_owner_id }}+${{ github.repository_owner }}@users.noreply.github.com
+        run: ./.githooks/push-review.ps1 -Range "origin/$env:BASE_REF..$env:HEAD_SHA" -Ci -ExpectedEmail $env:EXPECTED_EMAIL
