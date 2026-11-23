@@ -1,5 +1,5 @@
 # CI (M0 plan, task 3). Runs on every pull request and on every push to main.
-# Actions are pinned by commit id, with the release in a comment.
+# Actions are pinned by commit id, with the release in a comment; Dependabot updates both.
 
 name: CI
 
