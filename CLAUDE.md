@@ -29,7 +29,7 @@ The [spec](spec/spec.md) says what must be true and wins over everything else. T
 
 - `git push` runs the [push review](docs/review/push-review.md): fixed checks, then four AI reviewers. **Never use `--no-verify`.** If the hook isn't switched on (`git config core.hooksPath` doesn't print `.githooks`), stop and tell the author instead of pushing.
 - When the review blocks a push, fix the commit it names: `git commit --fixup=<sha>`, then `git rebase --autosquash` onto the branch's base. Don't stack "fix review" commits. If you think a FAIL is wrong, tell the author: only the author adds a `Review-note:` trailer.
-- Work on a branch named after the task (`m0/02-solution-apphost`), never on `main`. Push the branch, then open a pull request with `gh pr create`. Its description includes the "For the PR description" section of the review report in `.git/push-reviews/`.
+- Work on a branch named after the task (`m0/02-solution-apphost`), never on `main`. Push the branch, then open a pull request with `gh pr create`. Its description includes the "For the PR description" section of the review report in `.git/push-reviews/`. Then mark the task done in the plan's progress table, with the PR's number, in one last commit pushed to the same PR.
 - **Never merge.** The author reviews and merges every pull request, with rebase-and-merge. Force-push only your own pull request's branch, with `--force-with-lease`.
 
 ## Ask the author first

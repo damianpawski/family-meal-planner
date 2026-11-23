@@ -93,6 +93,7 @@ Dependabot is configured (`.github/dependabot.yml`, M0 task 3) with `commit-mess
 
 - **From M0 task 3 on**, `main` only changes through a pull request with CI green. (M0 task 1 is direct commits, because there's no repo or CI yet, and task 2 merges before CI exists.)
 - One branch and one PR per plan task, named after it: `m0/06-server-hardening`.
+- **Each plan has a progress table** after its goal and requirements, one row per task, and a task's PR marks its own row done. Once the PR is open, one last commit (`docs(plan): mark task 6 done`) sets the row's status and the PR's number, and is pushed to the same PR. The row then reaches `main` together with the task's work, so the table never shows a task as done before it has merged. Work without a PR of its own, such as M0's spike, is marked by the PR that records its results.
 - The PR description has: what and why, the spec ids, how it was tested, and the push review's summary with its FLAGs, NITs and any review notes ([push review](review/push-review.md#verdict-and-output)).
 - The agent opens PRs; the author reviews and merges.
 - **Merging is rebase-and-merge only**, with "Require linear history" on in the ruleset for `main`. Squash merging would collapse each task's reviewed commits, messages and trailers into one, and merge commits would clutter the history. With rebase-and-merge, every commit the push review checked lands on `main` with its message and content unchanged. GitHub does give each commit a new id when it rebases it, so reviews are tied to the PR, not to commit ids.
