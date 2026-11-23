@@ -1,0 +1,2 @@
+# Throwaway: a made-up token for Try it 6. Never merged.
+GITHUB_TOKEN=ghp_J0hzMwCeXdy4wQHiTYi65Izvk5iUz3rPtLQo
