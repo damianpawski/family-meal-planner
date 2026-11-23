@@ -43,6 +43,12 @@ jobs:
       - name: Restore in locked mode
         run: dotnet restore MealPlanner.slnx --locked-mode
 
+      # ADR 12's lists: the app's for every project under src/, the test list (which also
+      # allows MPL-2.0) for the whole solution. The script says how.
+      - name: Check licences
+        shell: pwsh
+        run: ./.github/scripts/check-licences.ps1
+
       - name: Build
         run: dotnet build MealPlanner.slnx --configuration Release --no-restore
 
