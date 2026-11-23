@@ -2,6 +2,12 @@
   "version": 2,
   "dependencies": {
     "net11.0": {
+      "DamerauLevenshteinDistance-Gpl": {
+        "type": "Direct",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "kehyTZVUvqq/CNTyZsfF5jhxpJeTYos9YaML/gfYcypKoevne3LDeRBIx1SdL2io7g2y+l+M7uHOj+oY6SRZgg=="
+      },
       "Microsoft.EntityFrameworkCore.Abstractions": {
         "type": "Transitive",
         "resolved": "10.0.15",

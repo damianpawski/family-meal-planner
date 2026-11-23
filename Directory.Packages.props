@@ -31,6 +31,10 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.15" />
   </ItemGroup>
 
+  <ItemGroup Label="Throwaway">
+    <PackageVersion Include="DamerauLevenshteinDistance-Gpl" Version="1.0.0" />
+  </ItemGroup>
+
   <ItemGroup Label="ServiceDefaults">
     <PackageVersion Include="Microsoft.Extensions.Http.Resilience" Version="11.0.0" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.21.0" />

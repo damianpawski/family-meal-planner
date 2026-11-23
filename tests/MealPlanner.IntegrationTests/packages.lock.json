@@ -648,6 +648,7 @@
       "mealplanner": {
         "type": "Project",
         "dependencies": {
+          "DamerauLevenshteinDistance-Gpl": "[1.0.0, )",
           "MealPlanner.Client": "[1.0.0, )",
           "MealPlanner.Data": "[1.0.0, )",
           "MealPlanner.ServiceDefaults": "[1.0.0, )"
@@ -680,6 +681,12 @@
         "dependencies": {
           "Microsoft.AspNetCore.Components.Web": "[11.0.0, )"
         }
+      },
+      "DamerauLevenshteinDistance-Gpl": {
+        "type": "CentralTransitive",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "kehyTZVUvqq/CNTyZsfF5jhxpJeTYos9YaML/gfYcypKoevne3LDeRBIx1SdL2io7g2y+l+M7uHOj+oY6SRZgg=="
       },
       "EFCore.NamingConventions": {
         "type": "CentralTransitive",

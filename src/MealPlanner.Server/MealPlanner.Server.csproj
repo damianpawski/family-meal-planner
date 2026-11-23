@@ -13,4 +13,8 @@
     <ProjectReference Include="..\MealPlanner.ServiceDefaults\MealPlanner.ServiceDefaults.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="DamerauLevenshteinDistance-Gpl" />
+  </ItemGroup>
+
 </Project>
